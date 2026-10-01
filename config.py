@@ -11,7 +11,7 @@ BUSINESS = {
     "phone": "+91 9417566773",
     "email": "propfindofficial@gmail.com",
     "address": "Sector 68, near Jubilee Walk, Mohali, Punjab",
-    "whatsapp": "919876543210",
+    "whatsapp": "91 9417566773",
     "logo": "NS",
     "social": {"instagram": "#", "facebook": "#", "linkedin": "#"},
 }
