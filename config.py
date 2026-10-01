@@ -9,7 +9,7 @@ BUSINESS = {
     "name": "Propfind Estates",
     "tagline": "Spaces with a sense of belonging.",
     "phone": "+91 9417566773",
-    "email": "hello@PropFindestates.com",
+    "email": "propfindofficial@gmail.com",
     "address": "Sector 68, near Jubilee Walk, Mohali, Punjab",
     "whatsapp": "919876543210",
     "logo": "NS",
