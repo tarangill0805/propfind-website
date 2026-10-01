@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{{ url_for('home', _external=True) }}</loc></url><url><loc>{{ url_for('properties', _external=True) }}</loc></url>{% for property in properties %}<url><loc>{{ url_for('property_detail', slug=property.slug, _external=True) }}</loc></url>{% endfor %}</urlset>

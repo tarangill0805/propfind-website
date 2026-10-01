@@ -1,0 +1,90 @@
+<article class="property-card">
+
+    <a
+        href="{{ url_for('property_detail', slug=property.slug) }}"
+        class="card-image"
+    >
+
+        {% if property.images is defined and property.images %}
+
+            {% set image = property.images[0] %}
+
+            <img
+                src="{{ url_for('static', filename='uploads/' ~ image.filename) }}"
+                alt="{{ property.title }}"
+                loading="lazy"
+            >
+
+        {% else %}
+
+            <div class="image-placeholder">
+                <span>
+                    {{ property.property_type }}
+                </span>
+            </div>
+
+        {% endif %}
+
+        {% if property.featured %}
+
+            <span class="badge">
+                Featured
+            </span>
+
+        {% endif %}
+
+    </a>
+
+
+
+
+    <div class="card-body">
+
+        <div class="card-meta">
+
+            <span class="purpose">
+                {{ property.purpose }}
+            </span>
+
+            {% if property.area %}
+
+                <span>
+                    {{ property.area }} sq ft
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <h3>
+
+            <a
+                href="{{ url_for('property_detail', slug=property.slug) }}"
+            >
+                {{ property.title }}
+            </a>
+
+        </h3>
+
+
+        <p class="card-location">
+            📍 {{ property.location }}, {{ property.city }}
+        </p>
+
+
+        <div class="card-bottom">
+
+            <strong class="card-price">
+                {{ property.price|money }}
+            </strong>
+
+            <span class="card-type">
+                {{ property.property_type }}
+            </span>
+
+        </div>
+
+    </div>
+
+</article>
