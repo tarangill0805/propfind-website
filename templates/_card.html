@@ -1,90 +1,112 @@
 <article class="property-card">
 
-    <a
-        href="{{ url_for('property_detail', slug=property.slug) }}"
-        class="card-image"
-    >
 
-        {% if property.images is defined and property.images %}
+<a
+    href="{{ url_for('property_detail', slug=property.slug) }}"
+    class="card-image property-slider"
+>
 
-            {% set image = property.images[0] %}
+    {% if property.images is defined and property.images %}
 
-            <img
-                src="{{ url_for('static', filename='uploads/' ~ image.filename) }}"
-                alt="{{ property.title }}"
-                loading="lazy"
-            >
+        <div class="slider-images">
 
-        {% else %}
+            {% for image in property.images %}
 
-            <div class="image-placeholder">
-                <span>
-                    {{ property.property_type }}
-                </span>
-            </div>
+                <img
+                    src="{{ url_for('static', filename='uploads/' ~ image.filename) }}"
+                    alt="{{ property.title }}"
+                    class="property-slide {% if loop.first %}active{% endif %}"
+                    loading="lazy"
+                >
 
-        {% endif %}
-
-        {% if property.featured %}
-
-            <span class="badge">
-                Featured
-            </span>
-
-        {% endif %}
-
-    </a>
-
-
-
-
-    <div class="card-body">
-
-        <div class="card-meta">
-
-            <span class="purpose">
-                {{ property.purpose }}
-            </span>
-
-            {% if property.area %}
-
-                <span>
-                    {{ property.area }} sq ft
-                </span>
-
-            {% endif %}
+            {% endfor %}
 
         </div>
 
+        {% if property.images|length > 1 %}
+            <button class="slider-arrow slider-prev" type="button" aria-label="Previous photo">
+                ‹
+            </button>
 
-        <h3>
+            <button class="slider-arrow slider-next" type="button" aria-label="Next photo">
+                ›
+            </button>
 
-            <a
-                href="{{ url_for('property_detail', slug=property.slug) }}"
-            >
-                {{ property.title }}
-            </a>
+            <div class="slider-dots">
+                {% for image in property.images %}
+                    <span class="slider-dot {% if loop.first %}active{% endif %}"></span>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-        </h3>
+    {% else %}
 
-
-        <p class="card-location">
-            📍 {{ property.location }}, {{ property.city }}
-        </p>
-
-
-        <div class="card-bottom">
-
-            <strong class="card-price">
-                {{ property.price|money }}
-            </strong>
-
-            <span class="card-type">
+        <div class="image-placeholder">
+            <span>
                 {{ property.property_type }}
             </span>
-
         </div>
 
+    {% endif %}
+
+    {% if property.featured %}
+
+        <span class="badge">
+            Featured
+        </span>
+
+    {% endif %}
+
+</a>
+
+
+<div class="card-body">
+
+    <div class="card-meta">
+
+        <span class="purpose">
+            {{ property.purpose }}
+        </span>
+
+        {% if property.area %}
+
+            <span>
+                {{ property.area }} sq ft
+            </span>
+
+        {% endif %}
+
     </div>
+
+
+    <h3>
+
+        <a
+            href="{{ url_for('property_detail', slug=property.slug) }}"
+        >
+            {{ property.title }}
+        </a>
+
+    </h3>
+
+
+    <p class="card-location">
+        📍 {{ property.location }}, {{ property.city }}
+    </p>
+
+
+    <div class="card-bottom">
+
+        <strong class="card-price">
+            {{ property.price|money }}
+        </strong>
+
+        <span class="card-type">
+            {{ property.property_type }}
+        </span>
+
+    </div>
+
+</div>
 
 </article>

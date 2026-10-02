@@ -1,1 +1,441 @@
-{% extends 'base.html' %}{% block title %}{{ property.title }} | {{ business.name }}{% endblock %}{% block content %}<main class="page detail"><a class="back-link" href="{{ url_for('properties') }}">← Back to properties</a><div class="detail-grid"><div><div class="detail-image"><span>{{ property.property_type }}</span></div><div class="thumb-row">{% for image in images %}<img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="{{ image.alt_text }}">{% endfor %}</div></div><div class="detail-copy"><p class="eyebrow">{{ property.purpose }} · {{ property.status }}</p><h1>{{ property.title }}</h1><p class="location">⌖ {{ property.location }}, {{ property.city }}</p><div class="price">{{ property.price|money }}</div><div class="facts"><span><b>{{ property.area }}</b> sq ft</span><span><b>{{ property.bedrooms or '—' }}</b> beds</span><span><b>{{ property.bathrooms or '—' }}</b> baths</span><span><b>{{ property.parking or '—' }}</b> parking</span></div><p>{{ property.description }}</p><a class="button" href="https://wa.me/{{ business.whatsapp }}?text=I'm interested in {{ property.title }}">WhatsApp an advisor ↗</a></div></div><section class="detail-lower"><div><h2>About this property</h2><p>{{ property.description }}</p><h3>Features</h3><div class="feature-list">{% for feature in (property.features or '').split(',') if feature.strip() %}<span>✓ {{ feature.strip() }}</span>{% endfor %}</div></div><form class="enquiry-form" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><p class="eyebrow">Interested?</p><h2>Request a viewing</h2><input required name="name" placeholder="Your name"><input required name="phone" placeholder="Phone number"><input type="email" name="email" placeholder="Email address"><textarea name="message" rows="4" placeholder="Tell us a little about your requirements"></textarea><button class="button">Send enquiry</button></form></section></main>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}
+{{ property.title }} | {{ business.name }}
+{% endblock %}
+
+{% block content %}
+
+<main class="page detail">
+
+    <!-- BACK -->
+    <a href="{{ url_for('properties') }}" class="back-link">
+        ← Back to properties
+    </a>
+
+
+    <!-- PROPERTY TOP -->
+    <div class="detail-grid">
+
+        <!-- =========================================
+             PROPERTY IMAGE GALLERY
+        ========================================== -->
+
+        <div class="property-image-gallery">
+
+            {% if images %}
+
+                <!-- MAIN IMAGE -->
+                <div class="property-main-image">
+
+                    <img
+                        id="mainPropertyImage"
+                        src="{{ url_for('static', filename='uploads/' ~ images[0].filename) }}"
+                        alt="{{ images[0].alt_text or property.title }}"
+                        onclick="openFullScreen(this.src)"
+                    >
+
+                    <button
+                        type="button"
+                        class="image-zoom-button"
+                        onclick="openFullScreen(document.getElementById('mainPropertyImage').src)"
+                        aria-label="View image fullscreen"
+                    >
+                        ⛶
+                    </button>
+
+                </div>
+
+
+                <!-- THUMBNAILS -->
+                <div class="property-thumbnails">
+
+                    {% for image in images %}
+
+                        <img
+                            src="{{ url_for('static', filename='uploads/' ~ image.filename) }}"
+                            alt="{{ image.alt_text or property.title }}"
+                            class="property-thumbnail {% if loop.first %}active{% endif %}"
+                            onclick="changePropertyImage(this)"
+                        >
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="image-placeholder property-detail-placeholder">
+                    <span>{{ property.property_type }}</span>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================================
+             PROPERTY DETAILS
+        ========================================== -->
+
+        <div class="detail-copy">
+
+            <p class="eyebrow">
+                {{ property.property_type }}
+            </p>
+
+            <h1>
+                {{ property.title }}
+            </h1>
+
+            {% if property.location %}
+                <p class="location">
+                    📍 {{ property.location }}
+                </p>
+            {% endif %}
+
+
+            <!-- PRICE -->
+
+            {% if property.price %}
+                <div class="price">
+                    ₹{{ property.price }}
+                </div>
+            {% endif %}
+
+
+            <!-- PROPERTY FACTS -->
+
+            <div class="facts">
+
+                {% if property.area %}
+                    <span>
+                        Area
+                        <b>{{ property.area }}</b>
+                    </span>
+                {% endif %}
+
+                {% if property.bedrooms %}
+                    <span>
+                        Bedrooms
+                        <b>{{ property.bedrooms }}</b>
+                    </span>
+                {% endif %}
+
+                {% if property.bathrooms %}
+                    <span>
+                        Bathrooms
+                        <b>{{ property.bathrooms }}</b>
+                    </span>
+                {% endif %}
+
+            </div>
+
+
+            <!-- PURPOSE -->
+
+            {% if property.purpose %}
+                <p class="property-purpose">
+                    <strong>Purpose:</strong>
+                    {{ property.purpose }}
+                </p>
+            {% endif %}
+
+
+            <!-- DESCRIPTION -->
+
+            {% if property.description %}
+
+                <div class="property-description">
+
+                    <h2>
+                        About this property
+                    </h2>
+
+                    <p>
+                        {{ property.description }}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- CONTACT BUTTON -->
+
+            <a
+                href="{{ url_for('contact') }}"
+                class="button"
+            >
+                Enquire about this property →
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         PROPERTY LOWER SECTION
+    ========================================== -->
+
+    <div class="detail-lower">
+
+        <!-- PROPERTY INFORMATION -->
+
+        <div>
+
+            <p class="eyebrow">
+                Property information
+            </p>
+
+            <h2>
+                Your next address starts here.
+            </h2>
+
+            {% if property.description %}
+
+                <p class="lead">
+                    {{ property.description }}
+                </p>
+
+            {% else %}
+
+                <p class="muted">
+                    Contact us for complete property information,
+                    pricing and availability.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ENQUIRY FORM -->
+
+        <div>
+
+            <h2>
+                Interested?
+            </h2>
+
+            <form
+                class="enquiry-form"
+                method="POST"
+                action="{{ url_for('contact') }}"
+            >
+
+                <input
+                    type="hidden"
+                    name="property_id"
+                    value="{{ property.id }}"
+                >
+
+                <input
+                    type="hidden"
+                    name="property"
+                    value="{{ property.title }}"
+                >
+
+
+                <label for="name">
+                    Your name
+                </label>
+
+                <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    placeholder="Your name"
+                    required
+                >
+
+
+                <label for="phone">
+                    Phone number
+                </label>
+
+                <input
+                    id="phone"
+                    type="tel"
+                    name="phone"
+                    placeholder="Phone number"
+                    required
+                >
+
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="Email address"
+                >
+
+
+                <label for="message">
+                    Message
+                </label>
+
+                <textarea
+                    id="message"
+                    name="message"
+                    placeholder="I am interested in this property..."
+                    required
+                >I am interested in {{ property.title }}.</textarea>
+
+
+                <button
+                    type="submit"
+                    class="button"
+                >
+                    Send Enquiry →
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================
+     FULLSCREEN IMAGE
+========================================= -->
+
+<div
+    id="imageFullscreen"
+    class="image-fullscreen"
+    onclick="closeFullScreen(event)"
+>
+
+    <button
+        type="button"
+        class="close-fullscreen"
+        onclick="closeFullScreen(event)"
+        aria-label="Close image"
+    >
+        &times;
+    </button>
+
+    <img
+        id="fullscreenImage"
+        src=""
+        alt="Property image"
+        onclick="event.stopPropagation()"
+    >
+
+</div>
+
+
+<script>
+
+/* =========================================
+   CHANGE PROPERTY IMAGE
+========================================= */
+
+function changePropertyImage(thumbnail) {
+
+    const mainImage =
+        document.getElementById("mainPropertyImage");
+
+    if (!mainImage) {
+        return;
+    }
+
+    mainImage.src = thumbnail.src;
+
+    document
+        .querySelectorAll(".property-thumbnail")
+        .forEach(function(image) {
+
+            image.classList.remove("active");
+
+        });
+
+    thumbnail.classList.add("active");
+}
+
+
+/* =========================================
+   OPEN FULLSCREEN
+========================================= */
+
+function openFullScreen(imageSrc) {
+
+    const fullscreen =
+        document.getElementById("imageFullscreen");
+
+    const fullscreenImage =
+        document.getElementById("fullscreenImage");
+
+    if (!fullscreen || !fullscreenImage) {
+        return;
+    }
+
+    fullscreenImage.src = imageSrc;
+
+    fullscreen.style.display = "flex";
+
+    document.body.style.overflow = "hidden";
+}
+
+
+/* =========================================
+   CLOSE FULLSCREEN
+========================================= */
+
+function closeFullScreen(event) {
+
+    if (
+        event &&
+        event.target &&
+        event.target.id === "fullscreenImage"
+    ) {
+        return;
+    }
+
+    const fullscreen =
+        document.getElementById("imageFullscreen");
+
+    if (!fullscreen) {
+        return;
+    }
+
+    fullscreen.style.display = "none";
+
+    document.body.style.overflow = "";
+}
+
+
+/* =========================================
+   ESC KEY
+========================================= */
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        const fullscreen =
+            document.getElementById("imageFullscreen");
+
+        if (fullscreen) {
+
+            fullscreen.style.display = "none";
+
+            document.body.style.overflow = "";
+
+        }
+
+    }
+
+});
+
+</script>
+
+{% endblock %}
